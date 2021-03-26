@@ -51,7 +51,6 @@ translation = {
 }
 
 def getStockData(action, stockInfo):
-    logging.info(stockInfo["currentPrice"])
     if action in stockInfo.keys():
         if stockInfo[action] is None:
             return "I don't have data for that particular request"
