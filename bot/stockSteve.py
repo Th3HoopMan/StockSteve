@@ -23,9 +23,9 @@ coinbase_client = Client(coinbase_key, coinbase_secret)
 
 
 translation = {
-    "currentPrice": "The current price is: ",
+    "regularMarketPrice": "The current price is: ",
     "open": "The open price was: ",
-    "previousClose": "The previous close price was: ",
+    "regularMarketPreviousClose": "The previous close price was: ",
     "regularMarketOpen": "The regular market open price was: ",
     "volume24Hr": "The volume from the last 24hrs is: ",
     "regularMarketDayHigh": "The regular market day high is: ",
@@ -64,7 +64,10 @@ def getStockData(action, stockInfo):
             return "I don't have {action} for that particular stock".format(action=action)
         elif action == "longBusinessSummary":
             return stockInfo[action]
-        return "{translation} [{symbol}] {value}".format(translation=translation[action], symbol=stockInfo["symbol"], value=str(stockInfo[action]))
+        if action in translation.keys():
+            return "{translation} [{symbol}] {value}".format(translation=translation[action], symbol=stockInfo["symbol"], value=str(stockInfo[action]))
+        else:
+            return "The {action} for {symbol} is: {value}".format(action=action, symbol=stockInfo["symbol"], value=str(stockInfo[action]))
     elif action == "overview":
         return "Stock: {symbol} \nPrice: {price}\nHigh: {high}\nLow: {low}".format(symbol=stockInfo["symbol"], price=stockInfo["regularMarketPrice"], high=stockInfo["dayHigh"], low=stockInfo["dayLow"])
     else:
@@ -86,7 +89,7 @@ def pullStock(symbol, action):
         return getStockData(action, stock.info)
     except Exception as e:
         logging.error(e, exc_info=True)
-        return "There was an issue finding data for {stock}. Please check your formatting and try again.".format(stock=symbol) 
+        return "There was an issue finding {action} data for {stock}. Please check your formatting and try again.".format(action=action, stock=symbol) 
 
 def pullCryptoPrice(coin):
     try:
