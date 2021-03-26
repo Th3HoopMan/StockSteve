@@ -113,13 +113,6 @@ async def open(ctx, stock):
     breif="The price the regular market closed at"
 )
 async def close(ctx, stock):
-    await ctx.send(pullStock(stock, "regularMarketClose"))
-
-@bot.command(
-    help="The previous day close price",
-    breif="The previous day close price"
-)
-async def prevClose(ctx, stock):
     await ctx.send(pullStock(stock, "regularMarketPreviousClose"))
 
 @bot.command(
