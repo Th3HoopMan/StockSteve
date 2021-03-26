@@ -333,7 +333,6 @@ async def totalRevenue(ctx, stock):
 @bot.event
 async def on_command_error(ctx, error):
     logging.error(error)
-    await ctx.send("Uh oh, I didn't understand the command. Double check your syntax or ask for help.")
 
 # previousClose
 # regularMarketOpen
