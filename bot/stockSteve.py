@@ -45,7 +45,7 @@ translation = {
     "sharesOutstanding": "The shares outstanding are: ",
     "sharesShort": "The number of shares shorted is: ",
     "sharesPercentSharesOut": "The percent of shares out is: ",
-    "shortRatio": "The short ration is: ",
+    "shortRatio": "The short ratio is: ",
     "threeYearAverageReturn": "The 3 year average return is: ",
     "dateShortInterest": "The the short interest is: ",
     "sharesShortPriorMonth": "The the number of shares short last month was: ",
@@ -60,18 +60,22 @@ translation = {
 
 def getStockData(action, stockInfo):
     if action in stockInfo.keys():
+        if type(stockInfo[action]) == int or type(stockInfo[action]) == float:
+            value = "{:,}".format(stockInfo[action])
+        else:
+            value = stockInfo[action]
         if stockInfo[action] is None:
             return "I don't have {action} for that particular stock".format(action=action)
         elif action == "longBusinessSummary":
             return stockInfo[action]
         if action in translation.keys():
-            return "{translation} [{symbol}] {value}".format(translation=translation[action], symbol=stockInfo["symbol"], value=str(stockInfo[action]))
+            return "{translation} [{symbol}] {value}".format(translation=translation[action], symbol=stockInfo["symbol"], value=str(value))
         else:
-            return "The {action} for {symbol} is: {value}".format(action=action, symbol=stockInfo["symbol"], value=str(stockInfo[action]))
+            return "The {action} for {symbol} is: {value}".format(action=action, symbol=stockInfo["symbol"], value=str(value))
     elif action == "overview":
-        return "Stock: {symbol} \nPrice: {price}\nHigh: {high}\nLow: {low}".format(symbol=stockInfo["symbol"], price=stockInfo["regularMarketPrice"], high=stockInfo["dayHigh"], low=stockInfo["dayLow"])
+        return "Stock: {symbol} \nPrice: {price}\nHigh: {high}\nLow: {low}".format(symbol=stockInfo["symbol"], price="{:,}".format(stockInfo["regularMarketPrice"]), high="{:,}".format(stockInfo["dayHigh"]), low="{:,}".format(stockInfo["dayLow"]))
     else:
-        return "I don't recognize: " + action
+        return "I don't recognize {action} for this stock.".format(action=action)
 
 
 
