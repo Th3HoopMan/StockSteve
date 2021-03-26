@@ -31,7 +31,7 @@ translation = {
     "regularMarketDayHigh": "The regular market day high is: ",
     "regularMarketPreviousClose": "The regular market previous close was: ",
     "openInterest": "The open interest is: ",
-    "marketCap": "The market is: ",
+    "marketCap": "The market cap is: ",
     "averageVolume": "The average volume is: ",
     "dayLow": "The regular market day low is: ",
     "ytdReturn": "The YTD return is: ",
