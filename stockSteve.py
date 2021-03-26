@@ -2,6 +2,9 @@ import discord
 import logging
 import yfinance as yf
 from discord.ext import commands
+import os
+
+token = os.getenv("DISCORD_BOT_TOKEN")
 
 logging.basicConfig(level=logging.INFO)
 
@@ -335,7 +338,7 @@ async def on_command_error(ctx, error):
 # totalDebt
 # totalRevenue            
 
-bot.run('ODI0MTY0MDIzMTM3MzM3Mzc0.YFrYjw.FOENcsJzPWlgW9PWI20EaxKHDmY')
+bot.run(token)
 
 
 
