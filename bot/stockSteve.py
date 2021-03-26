@@ -73,7 +73,8 @@ def pullStock(symbol, action):
         logging.info(stock.info)
         logging.info("Getting {action} stock data".format(action=action))
         return getStockData(action, stock.info)
-    except:
+    except Exception as e:
+        logging.error(e, exc_info=True)
         return "There was an issue finding data for this stock. Please check your formatting and try again." 
 
 @bot.command(
