@@ -3,6 +3,9 @@ import logging
 import yfinance as yf
 from discord.ext import commands
 import os
+from coinbase.wallet.client import Client
+
+
 
 token = os.getenv("DISCORD_BOT_TOKEN")
 
@@ -10,9 +13,14 @@ logging.basicConfig(level=logging.INFO)
 
 client = discord.Client()
 
-msft = yf.Ticker("MSFT")
-
 bot = commands.Bot(command_prefix='!')
+
+coinbase_key = os.getenv("COINBASE_API_KEY")
+coinbase_secret = os.getenv("COINBASE_API_SECRET")
+
+coinbase_client = Client(coinbase_key, coinbase_secret)
+
+
 
 translation = {
     "currentPrice": "The current price is: ",
@@ -78,7 +86,36 @@ def pullStock(symbol, action):
         return getStockData(action, stock.info)
     except Exception as e:
         logging.error(e, exc_info=True)
-        return "There was an issue finding data for this stock. Please check your formatting and try again." 
+        return "There was an issue finding data for {stock}. Please check your formatting and try again.".format(stock=symbol) 
+
+def pullCryptoPrice(coin):
+    try:
+        price = coinbase_client.get_buy_price(currency_pair = '{coin}-USD'.format(coin=coin))
+        return "The price of {coin} is: {price}".format(coin=coin, price=price["amount"])
+    except Exception as e:
+        logging.error(e, exc_info=True)
+        return "Had an issue pulling price data for {coin}. Please check your formatting and try again." .format(coin=coin)
+
+@bot.command(
+    help="Gives the current price of Bitcoin in USD",
+    breif="Gives the current price of Bitcoin in USD"
+)
+async def BTC(ctx):
+    await ctx.send(pullCryptoPrice("BTC"))
+
+@bot.command(
+    help="Gives the current price of Ethereum in USD",
+    breif="Gives the current price of Ethereum in USD"
+)
+async def ETH(ctx):
+    await ctx.send(pullCryptoPrice("ETH"))
+
+@bot.command(
+    help="Gives the current price of the coin you specified in USD",
+    breif="Gives the current price of the coin you specified in USD"
+)
+async def crypto(ctx, coin):
+    await ctx.send(pullCryptoPrice(coin.upper()))
 
 @bot.command(
     help="Gives the current price, day High, and day Low of the stock",
@@ -236,7 +273,7 @@ async def threeYearAvgReturn(ctx, stock):
 
 @bot.command(
     help="The shares of a company that are currently sold short and not yet covered",
-    breif="The shares of a company that are currently sold short and not yet covered"
+    breif="Shares currently sold short/not covered"
 )
 async def shortInterest(ctx, stock):
     await ctx.send(pullStock(stock, "dateShortInterest"))
@@ -292,6 +329,7 @@ async def totalRevenue(ctx, stock):
 
 @bot.event
 async def on_command_error(ctx, error):
+    logging.error(error)
     await ctx.send("Uh oh, I didn't understand the command. Double check your syntax or ask for help.")
 
 # previousClose
