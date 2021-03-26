@@ -53,12 +53,12 @@ translation = {
 def getStockData(action, stockInfo):
     if action in stockInfo.keys():
         if stockInfo[action] is None:
-            return "I don't have data for that particular request"
+            return "I don't have {action} for that particular stock".format(action=action)
         elif action == "longBusinessSummary":
             return stockInfo[action]
         return "{translation} [{symbol}] {value}".format(translation=translation[action], symbol=stockInfo["symbol"], value=str(stockInfo[action]))
     elif action == "overview":
-        return "Stock: {symbol} \nPrice: {price}\nHigh: {high}\nLow: {low}".format(symbol=stockInfo["symbol"], price=stockInfo["currentPrice"], high=stockInfo["dayHigh"], low=stockInfo["dayLow"])
+        return "Stock: {symbol} \nPrice: {price}\nHigh: {high}\nLow: {low}".format(symbol=stockInfo["symbol"], price=stockInfo["regularMarketPrice"], high=stockInfo["dayHigh"], low=stockInfo["dayLow"])
     else:
         return "I don't recognize: " + action
 
@@ -66,8 +66,12 @@ def getStockData(action, stockInfo):
 
 def pullStock(symbol, action):
     try:
-        logging.info("Pulling stock")
-        stock = yf.Ticker(symbol)
+        if (symbol.startswith("$")):
+            logging.info("Pulling stock")
+            stock = yf.Ticker(symbol[1:])
+        else:
+            logging.info("Pulling stock")
+            stock = yf.Ticker(symbol)
         logging.info("Pulled stock")
         logging.info(stock.info)
         logging.info("Getting {action} stock data".format(action=action))
@@ -91,11 +95,11 @@ async def summary(ctx, stock):
     await ctx.send(pullStock(stock, "longBusinessSummary"))
 
 @bot.command(
-    help="Gives the current price of the stock",
+    help="Gives the current regular Market price of the stock",
     breif="Gives the current price of the stock"
 )
 async def price(ctx, stock):
-    await ctx.send(pullStock(stock, "currentPrice"))
+    await ctx.send(pullStock(stock, "regularMarketPrice"))
 
 @bot.command(
     help="The price the regular market opened at",
@@ -116,7 +120,7 @@ async def close(ctx, stock):
     breif="The previous day close price"
 )
 async def prevClose(ctx, stock):
-    await ctx.send(pullStock(stock, "previousClose"))
+    await ctx.send(pullStock(stock, "regularMarketPreviousClose"))
 
 @bot.command(
     help="The volume over the past 24 hours",
@@ -158,7 +162,7 @@ async def openInterest(ctx, stock):
     breif="The total dollar market value of a company's outstanding shares of stock"
 )
 async def marketCap(ctx, stock):
-    await ctx.send(pullStock(stock, "marketCao"))
+    await ctx.send(pullStock(stock, "marketCap"))
 
 @bot.command(
     help="The average trade volume",
