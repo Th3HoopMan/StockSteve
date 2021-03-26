@@ -98,7 +98,7 @@ def pullStock(symbol, action):
 def pullCryptoPrice(coin):
     try:
         price = coinbase_client.get_buy_price(currency_pair = '{coin}-USD'.format(coin=coin))
-        return "The price of {coin} is: {price}".format(coin=coin, price=price["amount"])
+        return "The price of {coin} is: {price}".format(coin=coin, price="{:,}".format(price["amount"]))
     except Exception as e:
         logging.error(e, exc_info=True)
         return "Had an issue pulling price data for {coin}. Please check your formatting and try again." .format(coin=coin)
